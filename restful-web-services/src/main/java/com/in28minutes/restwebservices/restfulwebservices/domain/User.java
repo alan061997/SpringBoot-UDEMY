@@ -4,10 +4,7 @@ package com.in28minutes.restwebservices.restfulwebservices.domain;
 Creating a User Bean
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
@@ -15,6 +12,7 @@ import java.util.Date;
 @Setter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
     private Integer id;
     private String name;

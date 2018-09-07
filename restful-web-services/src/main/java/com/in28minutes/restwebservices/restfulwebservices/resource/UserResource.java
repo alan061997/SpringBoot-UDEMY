@@ -2,9 +2,15 @@ package com.in28minutes.restwebservices.restfulwebservices.resource;
 
 import com.in28minutes.restwebservices.restfulwebservices.dao.UserDaoService;
 import com.in28minutes.restwebservices.restfulwebservices.domain.User;
+import com.in28minutes.restwebservices.restfulwebservices.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 
+import java.net.URI;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 @RestController
@@ -27,8 +33,12 @@ public class UserResource {
         Retrieve User by Id
     */
     @GetMapping("/users/{id}")
-    private User retrieveUser(@PathVariable final int id){
-        return userService.findOne(id);
+    private User retrieveUser(@PathVariable final int id) {
+        User user = userService.findOne(id);
+        if(user == null){
+            throw new UserNotFoundException("id-" + id);
+        }
+        return user;
     }
 
     /*
@@ -36,8 +46,17 @@ public class UserResource {
         Add new  User
     */
     @PostMapping("/users")
-    private void createUser(@RequestBody User user){
-        userService.save(user);
+    private ResponseEntity<Object> createUser(@RequestBody User user) {
+        User savedUser = userService.save(user);
+        // USER CREATED
+        // /user/{id} savedUser.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 }
